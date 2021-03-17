@@ -1,0 +1,33 @@
+{
+  "output_dir": "/Users/rocng/Downloads/MSRVTT-HGR/results/RET.released/mlmatch/vis.resnet152.pth.txt.bigru.16role.gcn.1L.attn.1024.loss.bi.af.embed.4.glove.init",
+  "attn_ft_files": {
+    "trn": [
+      "/Users/rocng/Downloads/MSRVTT-HGR/ordered_feature/SA/resnet152.pth/trn_ft.hdf5"
+    ],
+    "val": [
+      "/Users/rocng/Downloads/MSRVTT-HGR/ordered_feature/SA/resnet152.pth/val_ft.hdf5"
+    ],
+    "tst": [
+      "/Users/rocng/Downloads/MSRVTT-HGR/ordered_feature/SA/resnet152.pth/tst_ft.hdf5"
+    ]
+  },
+  "name_file": {
+    "trn": "/Users/rocng/Downloads/MSRVTT-HGR/public_split/trn_names.npy",
+    "val": "/Users/rocng/Downloads/MSRVTT-HGR/public_split/val_names.npy",
+    "tst": "/Users/rocng/Downloads/MSRVTT-HGR/public_split/tst_names.npy"
+  },
+  "word2int_file": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/word2int.json",
+  "int2word_file": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/int2word.npy",
+  "ref_caption_file": {
+    "trn": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/ref_captions.json",
+    "val": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/ref_captions.json",
+    "tst": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/ref_captions.json"
+  },
+  "ref_graph_file": {
+    "trn": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/sent2rolegraph.augment.json",
+    "val": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/sent2rolegraph.augment.json",
+    "tst": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/sent2rolegraph.augment.json"
+  },
+  "verb_concept_file": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/verb_gt.json",
+  "noun_concept_file": "/Users/rocng/Downloads/MSRVTT-HGR/annotation/RET/noun_gt.json"
+}
