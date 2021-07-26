@@ -9,7 +9,7 @@ Python 3 and PyTorch 1.6.
 
 ```
 # clone the repository
-git clone git@github.com:cshizhe/hgr_v2t.git
+git clone git@github.com:Roc-Ng/HANet.git
 cd HANet
 export PYTHONPATH=$(pwd):${PYTHONPATH}
 ```
