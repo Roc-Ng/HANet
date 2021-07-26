@@ -1,14 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="29b426d5-a7e4-4cbb-a51b-08178ccbe0d2" name="Default Changelist" comment="" />
+    <list default="true" id="29b426d5-a7e4-4cbb-a51b-08178ccbe0d2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.dinger/.dingerproject" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dinger/.dingerxp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dingerignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/model.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/noun_words_freq.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/path.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/verb_words_freq.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/word_embeds.glove32b.th" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/figures/method_intro.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/framework/modelbase.py" beforeDir="false" afterPath="$PROJECT_DIR$/framework/modelbase.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/driver/configs/prepare_globalmatch_configs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/driver/configs/prepare_mlmatch_configs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/driver/global_match.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/driver/model.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/driver/multilevel_match.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/driver/multilevel_match.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/driver/path.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/encoders/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/encoders/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/encoders/mlsent.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/encoders/mlsent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/encoders/mlvideo.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/encoders/mlvideo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/models/criterion.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/models/criterion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/models/globalmatch.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/models/globalmatch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/models/mlmatch.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/models/mlmatch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/t2vretrieval/readers/rolegraphs.py" beforeDir="false" afterPath="$PROJECT_DIR$/t2vretrieval/readers/rolegraphs.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1poyNGORSQLQN6VGHbFzAchnR5R" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -18,6 +57,78 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RunManager" selected="Python.make_gt">
+    <configuration name="make_concept" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="hgr_v2t" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/make_concept.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="make_gt" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="hgr_v2t" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/make_gt.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="untitle" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="hgr_v2t" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/untitle.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.make_gt" />
+        <item itemvalue="Python.make_concept" />
+        <item itemvalue="Python.untitle" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -29,5 +140,17 @@
       <updated>1615863697041</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

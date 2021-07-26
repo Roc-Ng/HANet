@@ -1,0 +1,35 @@
+{
+  "output_dir": "MSRVTT-HGR/results/mlmatch",
+  "attn_ft_files": {
+    "trn": [
+      "MSRVTT-HGR/ordered_feature/SA/resnet152.pth/trn_ft.hdf5"
+    ],
+    "val": [
+      "MSRVTT-HGR/ordered_feature/SA/resnet152.pth/val_ft.hdf5"
+    ],
+    "tst": [
+      "MSRVTT-HGR/ordered_feature/SA/resnet152.pth/tst_ft.hdf5"
+    ]
+  },
+  "name_file": {
+    "trn": "MSRVTT-HGR/public_split/trn_names.npy",
+    "val": "MSRVTT-HGR/public_split/val_names.npy",
+    "tst": "MSRVTT-HGR/public_split/tst_names.npy"
+  },
+  "word2int_file": "MSRVTT-HGR/annotation/RET/word2int.json",
+  "int2word_file": "MSRVTT-HGR/annotation/RET/int2word.npy",
+  "ref_caption_file": {
+    "trn": "MSRVTT-HGR/annotation/RET/ref_captions.json",
+    "val": "MSRVTT-HGR/annotation/RET/ref_captions.json",
+    "tst": "MSRVTT-HGR/annotation/RET/ref_captions.json"
+  },
+  "ref_graph_file": {
+    "trn": "MSRVTT-HGR/annotation/RET/sent2rolegraph.augment.json",
+    "val": "MSRVTT-HGR/annotation/RET/sent2rolegraph.augment.json",
+    "tst": "MSRVTT-HGR/annotation/RET/sent2rolegraph.augment.json"
+  },
+  "verb_concept_file": "MSRVTT-HGR/annotation/verb_gt.json",
+  "noun_concept_file": "MSRVTT-HGR/annotation/noun_gt.json",
+  "verb_concept_all_file": "MSRVTT-HGR/annotation/verb_gt_all.json",
+  "noun_concept_all_file": "MSRVTT-HGR/annotation/noun_gt_all.json"
+}

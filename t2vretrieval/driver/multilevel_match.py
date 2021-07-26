@@ -1,5 +1,4 @@
 import os
-import sys
 import argparse
 import json
 import time
@@ -97,6 +96,7 @@ def main():
         os.path.splitext(os.path.basename(model_file))[0]+'.npy')
       
       scores = _model.test(tst_reader, tst_pred_file, tst_model_file=model_file)
+
       if scores is not None:
         if is_first_eval:
           score_names = scores.keys()

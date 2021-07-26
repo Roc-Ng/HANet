@@ -1,8 +1,7 @@
 import math
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
 
 class GCNLayer(nn.Module):
   def __init__(self, embed_size, dropout=0.0):
@@ -21,6 +20,7 @@ class GCNLayer(nn.Module):
     node_embeds = node_fts + self.dropout(ctx_embeds)
     node_embeds = self.layernorm(node_embeds)
     return node_embeds
+
 
 class AttnGCNLayer(GCNLayer):
   def __init__(self, embed_size, d_ff, dropout=0.0):
@@ -49,6 +49,7 @@ class AttnGCNLayer(GCNLayer):
     node_embeds = self.layernorm(node_embeds)
     return node_embeds
 
+
 class GCNEncoder(nn.Module):
   def __init__(self, dim_input, dim_hidden, num_hidden_layers, 
     embed_first=False, dropout=0, attention=False):
@@ -63,7 +64,6 @@ class GCNEncoder(nn.Module):
       gcn_fn = AttnGCNLayer
     else:
       gcn_fn = GCNLayer
-
     if self.embed_first:
       self.first_embedding = nn.Sequential(
         nn.Linear(self.dim_input, self.dim_hidden),
@@ -84,7 +84,6 @@ class GCNEncoder(nn.Module):
     for k in range(self.num_hidden_layers):
       layer = self.layers[k]
       node_fts = layer(node_fts, rel_edges)
-      
     # (batch_size, num_nodes, dim_hidden)
     return node_fts
 

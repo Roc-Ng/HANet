@@ -1,0 +1,35 @@
+{
+  "output_dir": "VATEX/results/mlmatch",
+  "attn_ft_files": {
+    "trn": [
+      "VAREX/VATEX_ordered_feature/SA/RET.public.i3d/trn_ft.hdf5"
+    ],
+    "val": [
+      "VATEX/VATEX_ordered_feature/SA/RET.public.i3d/val_ft.hdf5"
+    ],
+    "tst": [
+      "VATEX/VATEX_ordered_feature/SA/RET.public.i3d/tst_ft.hdf5"
+    ]
+  },
+  "name_file": {
+    "trn": "/VATEX/public_split/trn_names.npy",
+    "val": "VATEX/public_split/val_names.npy",
+    "tst": "VATEX/public_split/tst_names.npy"
+  },
+  "word2int_file": "VATEX/annotation/RET/word2int.json",
+  "int2word_file": "VATEX/annotation/RET/int2word.npy",
+  "ref_caption_file": {
+    "trn": "VATEX/annotation/RET/ref_captions.json",
+    "val": "VATEX/annotation/RET/ref_captions.json",
+    "tst": "VATEX/annotation/RET/ref_captions.json"
+  },
+  "ref_graph_file": {
+    "trn": "VATEX/annotation/RET/sent2rolegraph.augment.json",
+    "val": "VATEX/annotation/RET/sent2rolegraph.augment.json",
+    "tst": "VATEX/annotation/RET/sent2rolegraph.augment.json"
+  },
+  "verb_concept_file": "VATEX/annotation/RET/verb_gt.json",
+  "noun_concept_file": "VATEX/annotation/RET/noun_gt.json",
+  "verb_concept_all_file": "VATEX/annotation/RET/verb_gt_all.json",
+  "noun_concept_all_file": "VATEX/annotation/RET/noun_gt_all.json"
+}

@@ -1,11 +1,7 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
 import framework.configbase
-import t2vretrieval.encoders.graph
-import json
-import time
 
 
 class MultilevelEncoderConfig(framework.configbase.ModuleConfig):
@@ -14,16 +10,28 @@ class MultilevelEncoderConfig(framework.configbase.ModuleConfig):
     self.dim_fts = [2048]
     self.dim_embed = 1024
     self.dropout = 0
-
     self.num_levels = 3
     self.share_enc = False
 
-    self.gcn_num_layers = 1
-    self.gcn_attention = True
-    self.gcn_dropout = 0.5
 
-    # self.verb_label_file = ''
-    # self.noun_label_file = ''
+class SEBlock(nn.Module):
+  def __init__(self, channel, r=16):
+    super(SEBlock, self).__init__()
+    self.avg_pool = nn.AdaptiveAvgPool1d(1)
+    self.fc = nn.Sequential(
+      nn.Linear(channel, channel // r, bias=False),
+      nn.ReLU(inplace=True),
+      nn.Linear(channel // r, channel, bias=False),
+      nn.Sigmoid(),
+    )
+
+  def forward(self, x):
+    b, c, t = x.size()
+    y = self.avg_pool(x).view(b, c)
+    y = self.fc(y).view(b, c, 1)
+    y = torch.mul(x, y)
+    return y
+
 
 class MultilevelEncoder(nn.Module):
   def __init__(self, config):
@@ -33,39 +41,24 @@ class MultilevelEncoder(nn.Module):
     input_size = sum(self.config.dim_fts)
     self.dropout = nn.Dropout(self.config.dropout)
     self.num_verbs = 10
-    self.num_nouns = 15
+    self.num_nouns = 20
     num_levels = 1 if self.config.share_enc else self.config.num_levels
     self.level_embeds = nn.ModuleList([
       nn.Linear(input_size, self.config.dim_embed, bias=True) for k in range(num_levels)])
-    # self.embedLayer = nn.Sequential(nn.Linear(input_size, self.config.dim_embed, bias=True), self.dropout,
-                                    # nn.ReLU())
     self.ft_attn = nn.Linear(self.config.dim_embed, 1, bias=True)
-    # add classifier
 
     verb_concept = 512
     noun_concept = 1024
     self.bn_verb = nn.BatchNorm1d(verb_concept)
     self.bn_noun = nn.BatchNorm1d(noun_concept)
-    self.classifier_verb = nn.Sequential(nn.Conv1d(self.config.dim_embed, verb_concept, 3, stride=1, padding=1),
+    self.classifier_verb = nn.Sequential(nn.Conv1d(self.config.dim_embed, verb_concept, 5, stride=1, padding=2),
                                          self.bn_verb, nn.Sigmoid())
     self.classifier_noun = nn.Sequential(nn.Conv1d(self.config.dim_embed, noun_concept, 1), self.bn_noun,
                                          nn.Sigmoid())
-    #  GCN
-    # GCN parameters
-    self.gcn = t2vretrieval.encoders.graph.GCNEncoder(self.config.dim_embed,
-                                                      self.config.dim_embed, self.config.gcn_num_layers,
-                                                      attention=self.config.gcn_attention, # True
-                                                      embed_first=False, dropout=self.config.gcn_dropout)
-
-    self.num_nodes = 1 + self.num_verbs+self.num_nouns
-    self.rel_matrix = torch.zeros(300, self.num_nodes, self.num_nodes, dtype=torch.float32).to(self.device)
-    self.rel_matrix[:, 0, 1:self.num_verbs+1] = 1
-    self.rel_matrix[:, 1:self.num_verbs + 1, 0] = 1
-    self.rel_matrix[:, 1:self.num_verbs + 1, 1+self.num_verbs:] = 1
-    self.rel_matrix[:, 1 + self.num_verbs:, 1:self.num_verbs + 1, ] = 1
-
-  def softmax2(self, x):
-    return (10*(torch.exp(x)-1))/(torch.sum((10*(torch.exp(x)-1)), dim=0)+1e-10)
+    self.seblock1 = SEBlock(self.config.dim_embed)
+    self.seblock2 = SEBlock(self.config.dim_embed)
+    self.conv1 = nn.Sequential(nn.Conv1d(self.config.dim_embed, self.config.dim_embed, 1))
+    self.conv2 = nn.Sequential(nn.Conv1d(self.config.dim_embed, self.config.dim_embed, 1))
 
   def forward(self, inputs, input_lens):
     '''
@@ -81,7 +74,7 @@ class MultilevelEncoder(nn.Module):
       if self.config.share_enc:
         k = 0
       embeds.append(self.dropout(self.level_embeds[k](inputs)))
-    # embeds = self.embedLayer(inputs)
+
     attn_scores = self.ft_attn(embeds[0]).squeeze(2)
     input_pad_masks = framework.ops.sequence_mask(input_lens, 
       max_len=attn_scores.size(1), inverse=True)
@@ -91,13 +84,18 @@ class MultilevelEncoder(nn.Module):
     max_len = inputs.shape[1]
     batch_size = inputs.shape[0]
     ############################################################
-    # print(inputs.shape)
-    embeds_re = embeds[1].permute(0, 2, 1)
-    logits_verb = self.classifier_verb(embeds_re)  # batch*seq_len*concept
-    logits_verb = logits_verb.permute(0, 2, 1)
+    embeds_re1 = embeds[1].permute(0, 2, 1)
+    embeds_re11 = self.seblock1(embeds_re1)
+    embeds_re11 = embeds_re11.permute(0, 2, 1).contiguous()
+    logits_verb = self.classifier_verb(embeds_re1)
+    logits_verb = logits_verb.permute(0, 2, 1)  # batch*seq_len*concept
+
     embeds_re2 = embeds[2].permute(0, 2, 1)
-    logits_noun = self.classifier_noun(embeds_re2)  # batch*seq_len*concept
-    logits_noun = logits_noun.permute(0, 2, 1)
+    embeds_re22 = self.seblock2(embeds_re2)
+    embeds_re22 = embeds_re22.permute(0, 2, 1).contiguous()
+    logits_noun = self.classifier_noun(embeds_re2)
+    logits_noun = logits_noun.permute(0, 2, 1)  # batch*seq_len*concept
+
     seq_len = input_lens.cpu().numpy()
     k = np.ceil(seq_len / 8).astype('int32')
     instance_logits_verb = torch.zeros(0).to(self.device)  # batch* concept
@@ -108,42 +106,29 @@ class MultilevelEncoder(nn.Module):
       tmp, _ = torch.topk(logits_noun[i][:seq_len[i]], k=int(k[i]), dim=0)
       instance_logits_noun = torch.cat([instance_logits_noun, torch.mean(tmp, 0, keepdim=True)], dim=0)
 
-    return sent_embeds, embeds[1], embeds[2], [instance_logits_verb, instance_logits_noun], max_len
-    # logits 这里需要弱监督学习
-    ## 训练的时候用真实的concept 测试时候用预测最高的结果
-    batch = inputs.shape[0]
-    rel_matrix = self.rel_matrix[:batch, :, :]
     embeds_verb = torch.zeros(0).to(self.device)
     embeds_noun = torch.zeros(0).to(self.device)
+    _, top_idx_verb = torch.topk(instance_logits_verb, k=self.num_verbs, dim=1)  # batch*nv
+    _, top_idx_noun = torch.topk(instance_logits_noun, k=self.num_nouns, dim=1)  # batch*nn
 
-    # emded_verb = torch.zeros(batch, self.num_verbs, dim_emded, dtype=torch.float32).to(self.device)
-    # emded_noun = torch.zeros(batch, self.num_nouns, dim_emded,  dtype=torch.float32).to(self.device)
-    _, top_idx_verb = torch.topk(instance_logits_verb, k=self.num_verbs, dim=1) # batch*4
-    _, top_idx_noun = torch.topk(instance_logits_noun, k=self.num_nouns, dim=1) # batch*6
-    # print(top_idx_verb[0:10])
-    # print(top_idx_noun[0:10])
-    for i in range(batch):
-      # st = time.time()
-      logits_verb_tmp = logits_verb[i, :input_lens[i], top_idx_verb[i]]  # len*4
-      logits_verb_tmp_norm = self.softmax2(logits_verb_tmp)
-      # logits_verb_tmp_norm = logits_verb_tmp / (torch.sum(logits_verb_tmp, dim=0)+1e-10)  # len*num_verb
-      embeds_verb_tmp = logits_verb_tmp_norm.permute(1, 0).mm(embeds[1][i, :input_lens[i], :])
-      embeds_verb = torch.cat([embeds_verb, embeds_verb_tmp.unsqueeze(0)], dim=0)
+    for i in range(batch_size):
+      logits_verb_tmp = logits_verb[i, :input_lens[i], top_idx_verb[i]]  # len*num_verb  logits_verb
+      ind = torch.argmax(logits_verb_tmp, dim=0)  # num_verb
+      if torch.max(ind)+2 < input_lens[i] and torch.min(ind) > 1:
+        emb_tmp = (embeds_re11[i:i+1, ind-2, :]+embeds_re11[i:i+1, ind-1, :] + embeds_re11[i:i+1, ind, :]
+                   + embeds_re11[i:i+1, ind+1, :]+embeds_re11[i:i+1, ind+2, :])/5
+        embeds_verb = torch.cat([embeds_verb, emb_tmp], dim=0)
+      else:
+        embeds_verb = torch.cat([embeds_verb, embeds_re11[i:i + 1, ind, :]], dim=0)
 
-      logits_noun_tmp = logits_noun[i, :input_lens[i], top_idx_noun[i]]  # len*6
-      logits_noun_tmp_norm = self.softmax2(logits_noun_tmp)
-      # logits_noun_tmp_norm = logits_noun_tmp / torch.sum(logits_noun_tmp, dim=0)  # len*num_noun
-      embeds_noun_tmp = logits_noun_tmp_norm.permute(1, 0).mm(embeds[2][i, :input_lens[i], :])
-      embeds_noun = torch.cat([embeds_noun, embeds_noun_tmp.unsqueeze(0)], dim=0)
-    return sent_embeds, embeds_verb, embeds_noun, [instance_logits_verb, instance_logits_noun], max_len
-    ## GCN
+      logits_noun_tmp = logits_noun[i, :input_lens[i], top_idx_noun[i]]  # len*num_noun
 
-    node_embeds = torch.cat([sent_embeds.unsqueeze(1), embeds_verb, embeds_noun], 1)  # batch*(1+n_v+n_n)*dim
-    node_ctx_embeds = self.gcn(node_embeds, rel_matrix)  # batch*(1+n_v+n_n)*dim2
-    sent_ctx_embeds = node_ctx_embeds[:, 0]
-    verb_ctx_embeds = node_ctx_embeds[:, 1: 1 + self.num_verbs].contiguous()
-    noun_ctx_embeds = node_ctx_embeds[:, 1+self.num_verbs:].contiguous()
-    # st3 = time.time()
-    # print('gcn time:{:.3f}s'.format(st3-st2))
+      if logits_noun_tmp.shape[0] > 2:
+        _, ind = torch.topk(logits_noun_tmp, k=3, dim=0)  # 3*num_noun
+        emb_tmp = (embeds_re22[i:i + 1, ind[0], :] + embeds_re22[i:i + 1, ind[1], :] + embeds_re22[i:i + 1, ind[2], :]) / 3
+      else:
+        ind = torch.argmax(logits_noun_tmp, dim=0)  # num_verb
+        emb_tmp = embeds_re22[i:i + 1, ind, :]
+      embeds_noun = torch.cat([embeds_noun, emb_tmp], dim=0)
 
-    return sent_ctx_embeds, verb_ctx_embeds, noun_ctx_embeds, [instance_logits_verb, instance_logits_noun], max_len
+    return sent_embeds, embeds_verb, embeds_noun, [embeds[1], embeds[2]], [instance_logits_verb, instance_logits_noun, top_idx_verb, top_idx_noun], max_len

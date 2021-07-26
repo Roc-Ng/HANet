@@ -1,14 +1,8 @@
 import os
-import time
 import json
 import numpy as np
-
 import torch
-import torch.nn as nn
 from torch import optim
-import torch.nn.functional as F
-
-import framework.logbase
 
 
 class ModelBase(object):
@@ -19,6 +13,7 @@ class ModelBase(object):
     self.device = torch.device("cuda:%d"%gpu_id if torch.cuda.is_available() else "cpu")
     self.config = config
     self.criterion_bce = torch.nn.BCELoss(reduction='none')
+    self.criterion_mse = torch.nn.MSELoss()
     if _logger is None:
       self.print_fn = print
     else:
@@ -183,6 +178,13 @@ class ModelBase(object):
     if self.lr_scheduler is not None:
       self.lr_scheduler.step()
 
+  ######################################################
+  def decay_learning_rate(self, optimizer, decay=0.99):
+    """decay learning rate to the last LR"""
+    for param_group in optimizer.param_groups:
+      param_group['lr'] = param_group['lr'] * decay
+
+
   def train(self, trn_reader, val_reader, model_dir, log_dir, resume_file=None):
     assert self.optimizer is not None
 
@@ -190,16 +192,21 @@ class ModelBase(object):
       self.load_checkpoint(resume_file)
 
     # first validate
-    # metrics = self.validate(val_reader)
+    # metrics,_,_ = self.validate(val_reader)
     # self.pretty_print_metrics('init val', metrics)
 
     # training
     step = 0
+    ###################################
+    best_rsum = 0
+    no_impr_counter = 0
+    lr_counter = 0
+    ###################################
     for epoch in range(self.config.num_epoch):
       avg_loss, step = self.train_one_epoch(
         step, trn_reader, val_reader, model_dir, log_dir)
       self.pretty_print_metrics('epoch (%d/%d) trn'%(epoch, self.config.num_epoch), avg_loss)
-      self.epoch_postprocess(epoch)
+      # self.epoch_postprocess(epoch) #################################
 
       if self.config.save_per_epoch:
         self.save_checkpoint(os.path.join(model_dir, 'epoch.%d.th'%epoch))
@@ -210,4 +217,30 @@ class ModelBase(object):
           'val.epoch.%d.step.%d.json'%(epoch, step)), 'w') as f:
           json.dump(metrics, f, indent=2)
         self.pretty_print_metrics('epoch (%d/%d) val' % (epoch, self.config.num_epoch), metrics)
-      
+      ############################################################################
+      # lr decay
+      # remember best R@ sum and save checkpoint
+      rsum = metrics['rsum']
+      is_best = rsum > best_rsum
+      best_rsum = max(rsum, best_rsum)
+      print(' * Current perf: {:.2f}'.format(rsum))
+      print(' * Best perf: {:.2f}'.format(best_rsum))
+
+      lr_counter += 1
+      # self.decay_learning_rate(self.optimizer)
+      if not is_best:
+        # When the validation performance decreased after an epoch,
+        # we divide the learning rate by 2 and continue training;
+        # but we use each learning rate for at least 3 epochs.
+        if lr_counter > 3:
+          # self.decay_learning_rate(self.optimizer, 0.5)
+          lr_counter = 0
+
+      # Early stop occurs if the validation performance does not improve in ten consecutive epochs
+      if not is_best:
+        no_impr_counter += 1
+      else:
+        no_impr_counter = 0
+      if no_impr_counter > 10:
+        print('Early stopping happended.\n')
+        break

@@ -1,10 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
-
-import framework.configbase
-import framework.ops
 
 import t2vretrieval.encoders.graph
 import t2vretrieval.encoders.sentence
@@ -42,7 +38,7 @@ class RoleGraphEncoder(t2vretrieval.encoders.sentence.SentAttnEncoder):
                                          nn.Sigmoid())
     self.classifier_noun = nn.Sequential(nn.Conv1d(self.config.rnn_hidden_size, noun_concept, 1), self.bn_noun,
                                          nn.Sigmoid())
-
+    self.fc = nn.Linear(self.config.rnn_hidden_size, self.config.rnn_hidden_size)
     #########################################
 
   def pool_phrases(self, word_embeds, phrase_masks, pool_type='avg'):
@@ -75,7 +71,6 @@ class RoleGraphEncoder(t2vretrieval.encoders.sentence.SentAttnEncoder):
     '''
     # (batch, max_sent_len, embed_size)
     word_embeds, word_attn_scores = super().forward(sent_ids, sent_lens, return_dense=True)
-    max_sent_len = sent_ids.size(1)
     sent_embeds = torch.sum(word_embeds * word_attn_scores.unsqueeze(2), 1) ## event embeds
     
     #####################################################################################
@@ -97,21 +92,20 @@ class RoleGraphEncoder(t2vretrieval.encoders.sentence.SentAttnEncoder):
     # (batch, num_phrases, embed_size)
     num_verbs = verb_masks.size(1)
     verb_embeds = self.pool_phrases(word_embeds, verb_masks, pool_type='max')
+    embeds_1 = verb_embeds
+
     if self.config.num_roles > 0:
       verb_embeds = verb_embeds * self.role_embedding(node_roles[:, :num_verbs])
-    num_nouns = noun_masks.size(1)
-    noun_embeds = self.pool_phrases(word_embeds, noun_masks, pool_type='max') 
+
+    noun_embeds = self.pool_phrases(word_embeds, noun_masks, pool_type='max')
+    embeds_2 = noun_embeds
     if self.config.num_roles > 0:
       noun_embeds = noun_embeds * self.role_embedding(node_roles[:, num_verbs:])  # batch*n_n*dim
 
     node_embeds = torch.cat([sent_embeds.unsqueeze(1), verb_embeds, noun_embeds], 1)  # batch*(1+n_v+n_n)*dim
     node_ctx_embeds = self.gcn(node_embeds, rel_edges)  # batch*(1+n_v+n_n)*dim2
-
     sent_ctx_embeds = node_ctx_embeds[:, 0]
     verb_ctx_embeds = node_ctx_embeds[:, 1: 1 + num_verbs].contiguous()
-    noun_ctx_embeds = node_ctx_embeds[:, 1 + num_verbs: ].contiguous()
-    
-    
-
-    return sent_ctx_embeds, verb_ctx_embeds, noun_ctx_embeds, [instance_logits_verb, instance_logits_noun]
+    noun_ctx_embeds = node_ctx_embeds[:, 1 + num_verbs:].contiguous()
+    return sent_ctx_embeds, verb_ctx_embeds, noun_ctx_embeds, [embeds_1, embeds_2], [instance_logits_verb, instance_logits_noun]
 

@@ -1,0 +1,62 @@
+{
+  "subcfgs": {
+    "video_encoder": {
+      "freeze": false,
+      "lr_mult": 1.0,
+      "opt_alg": "Adam",
+      "weight_decay": 0,
+      "dim_fts": [
+        2048
+      ],
+      "dim_embed": 1024,
+      "dropout": 0.2,
+      "num_levels": 3,
+      "share_enc": false,
+      "gcn_num_layers": 1,
+      "gcn_attention": true,
+      "gcn_dropout": 0.5
+    },
+    "text_encoder": {
+      "freeze": false,
+      "lr_mult": 1.0,
+      "opt_alg": "Adam",
+      "weight_decay": 0,
+      "num_words": 10510,
+      "dim_word": 300,
+      "fix_word_embed": false,
+      "rnn_type": "gru",
+      "bidirectional": true,
+      "rnn_hidden_size": 1024,
+      "num_layers": 1,
+      "dropout": 0.2,
+      "num_roles": 16,
+      "gcn_num_layers": 1,
+      "gcn_attention": true,
+      "gcn_dropout": 0.5
+    }
+  },
+  "trn_batch_size": 64,
+  "tst_batch_size": 300,
+  "num_epoch": 50,
+  "val_per_epoch": true,
+  "save_per_epoch": true,
+  "val_iter": -1,
+  "save_iter": -1,
+  "monitor_iter": 1000,
+  "summary_iter": 1000,
+  "base_lr": 0.0001,
+  "decay_schema": null,
+  "decay_boundarys": [],
+  "decay_rate": 1,
+  "max_frames_in_video": 20,
+  "max_words_in_sent": 30,
+  "margin": 0.2,
+  "max_violation": true,
+  "hard_topk": 1,
+  "loss_direction": "bi",
+  "num_verbs": 4,
+  "num_nouns": 6,
+  "attn_fusion": "embed",
+  "simattn_sigma": 4,
+  "loss_weights": null
+}

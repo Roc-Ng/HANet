@@ -38,11 +38,11 @@ class ContrastiveLoss(nn.Module):
 
     batch_size = scores.size(0)
     diagonal = scores.diag().view(batch_size, 1) # positive pairs
-
     # mask to clear diagonals which are positive pairs
     pos_masks = torch.eye(batch_size).bool().to(scores.device)
-
     batch_topk = min(batch_size, self.topk)
+
+
     if self.direction == 'i2t' or self.direction == 'bi':
       d1 = diagonal.expand_as(scores) # same collumn for im2s (negative sentence)
       # compare every diagonal score to scores in its collumn
@@ -67,6 +67,7 @@ class ContrastiveLoss(nn.Module):
       if self.max_violation:
         cost_im, _ = torch.topk(cost_im, batch_topk, dim=0)
         cost_im = cost_im / batch_topk
+
         if average_batch:
           cost_im = cost_im / batch_size
       else:

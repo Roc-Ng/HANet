@@ -2,8 +2,6 @@ import os
 import json
 import numpy as np
 import h5py
-import collections
-import torch
 
 import t2vretrieval.readers.mpdata
 
@@ -34,7 +32,6 @@ class RoleGraphDataset(t2vretrieval.readers.mpdata.MPDataset):
     self.num_videos = len(self.names)
     self.print_fn('num_videos %d' % (self.num_videos))
     ####################################################3
-    ## add this concept
     if verb_concept_file is not None:
       self.verb_concept = json.load(open(verb_concept_file))
       self.noun_concept = json.load(open(noun_concept_file))
@@ -180,10 +177,6 @@ class RoleGraphDataset(t2vretrieval.readers.mpdata.MPDataset):
       noun_concept = self.noun_concept[name][cap_idx]
       verb_concept_all = self.verb_concept_all[name]
       noun_concept_all = self.noun_concept_all[name]
-      # verb_concept = verb_concept[:self.num_verbs]
-      # noun_concept = noun_concept[:self.num_nouns]
-      # verb_concept = verb_concept.extend([verb_concept[-1]]*(self.num_verbs-len(verb_concept)))
-      # noun_concept = noun_concept.extend([noun_concept[-1]] * (self.num_nouns - len(noun_concept)))
       verb_concept_label = np.zeros(512)
       noun_concept_label = np.zeros(1024)
       verb_concept_mask = np.ones(512)
@@ -201,7 +194,8 @@ class RoleGraphDataset(t2vretrieval.readers.mpdata.MPDataset):
       out['noun_concept_label'] = noun_concept_label  #############
       out['verb_concept_mask'] = verb_concept_mask  # list#######
       out['noun_concept_mask'] = noun_concept_mask  #############
-      ###############################################
+      ####################################
+
 
     else:
       video_idx = idx
@@ -221,12 +215,15 @@ class RoleGraphDataset(t2vretrieval.readers.mpdata.MPDataset):
 
   def iterate_over_captions(self, batch_size):
     # the sentence order is the same as self.captions
+    idx = 0
     for s in range(0, len(self.captions), batch_size):
       e = s + batch_size
       data = []
       for sent in self.captions[s: e]:
         out = self.get_caption_outs({}, sent, self.ref_graphs[sent])
         data.append(out)
+        idx += 1
+
       outs = collate_graph_fn(data)
       yield outs
 
@@ -235,7 +232,7 @@ def collate_graph_fn(data):
   for key in ['names', 'attn_fts', 'attn_lens', 'sent_ids', 'sent_lens',
               'verb_masks', 'noun_masks', 'node_roles', 'rel_edges',
               'verb_concept_mask', 'noun_concept_mask', 
-              'verb_concept_label', 'noun_concept_label']:
+              'verb_concept_label', 'noun_concept_label', 'sent_concept']:
     if key in data[0]:
       outs[key] = [x[key] for x in data]
 

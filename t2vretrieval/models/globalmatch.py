@@ -1,11 +1,8 @@
 import os
 import numpy as np
 import collections
-import json
 
 import torch
-
-import framework.ops
 import framework.configbase
 import framework.modelbase
 
@@ -166,9 +163,7 @@ class GlobalMatchModel(framework.modelbase.ModelBase):
       metrics = None
     else:
       metrics, outs = self.evaluate(tst_reader, return_outs=True)
-    
-    with open(tst_pred_file, 'wb') as f:
-     np.save(f, outs)
+
 
     return metrics
 
