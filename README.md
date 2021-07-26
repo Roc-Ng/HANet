@@ -2,7 +2,7 @@
 
 This repository is the PyTorch implementation of our paper.
 
-![Overview of HANet Model](figures/pipeline.jpg)
+![Overview of HANet Model](figures/pipeline.png)
 
 ## Prerequisites
 Python 3 and PyTorch 1.6.
