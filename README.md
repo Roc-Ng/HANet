@@ -1,6 +1,6 @@
 # HANet: Hierarchical Alignment Networks for Video-Text Retrieval (ACMMM 2021)
 
-This repository is the PyTorch implementation of our paper.
+This repository is the PyTorch implementation of our paper [HANet](https://arxiv.org/abs/2107.12059).
 
 ![Overview of HANet Model](figures/pipeline.png)
 
