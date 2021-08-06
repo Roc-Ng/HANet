@@ -114,10 +114,10 @@ python multilevel_match.py ../../data/vatex/model.json ../../data/vatex/path.jso
 ## Citations
 If you use this code as part of any published research, we'd really appreciate it if you could cite the following paper:
 ```text
-@article{
+@article{wu2021hanet,
   title={HANet: Hierarchical Alignment Networks for Video-Text Retrieval},
   author={Wu, Peng and He, Xiangteng and Tang, Mingqian and Lv, Yiliang and Liu, Jing},
-  journal={ACM International Conference on Multimedia},
+  journal={arXiv preprint arXiv:2107.12059},
   year={2021}
 }
 ```
