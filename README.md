@@ -15,7 +15,7 @@ export PYTHONPATH=$(pwd):${PYTHONPATH}
 ```
 
 ## Datasets
-Provided annotations and pretrained features on MSRVTT and VATEX video captioning datasets can be downloaded from [OneDrive](https://stuxidianeducn-my.sharepoint.com/:f:/g/personal/pengwu_stu_xidian_edu_cn/Ejg636v4FltBpnZPWnKbVBsBhQgZ0Kq1ve6zxQPGePwpOQ?e=8YdWO8) (code: hanet). 
+Provided annotations and pretrained features on MSRVTT and VATEX video captioning datasets can be downloaded from [OneDrive](https://stuxidianeducn-my.sharepoint.com/:f:/g/personal/pengwu_stu_xidian_edu_cn/Ejg636v4FltBpnZPWnKbVBsBhQgZ0Kq1ve6zxQPGePwpOQ?e=8YdWO8) (code: hanet) or [Baidu Netdisk](https://pan.baidu.com/s/1fE94ZKZZ87aytdCCEG0xsQ) (code:d2gr). 
 
 
 ### Annotations
